@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -107,8 +106,8 @@ public class LexicalAnalyzer {
             }
 
             if (c.equals('?')){
-                System.out.println(c+"\t运算符<22>");
-                token.add(22);
+                System.out.println(c+"\t运算符<23>");
+                token.add(23);
                 return 1;
             }
 
@@ -200,12 +199,12 @@ public class LexicalAnalyzer {
                 }
             }
             if (p == 1){
-                System.out.println(cache+"\t常量<20>");
+                System.out.println(cache+"\t常量<21>");
             }else {
                 num.add(cache);
-                System.out.println(cache+"\t常量<20>");
+                System.out.println(cache+"\t常量<21>");
             }
-            token.add(20);
+            token.add(21);
             restart = 1;
             ch.clear();
             return 1;
@@ -223,8 +222,8 @@ public class LexicalAnalyzer {
             }
             String cache = cacheCh.toString();
             if ("PI".equals(cache)){
-                System.out.println(cache+"\t常量<20>");
-                token.add(20);
+                System.out.println(cache+"\t常量<21>");
+                token.add(21);
                 ch.clear();
                 restart = 1;
                 return 1;
@@ -248,12 +247,12 @@ public class LexicalAnalyzer {
                     }
                 }
                 if (p == 1){
-                    System.out.println(cache+"\t变量<21>");
+                    System.out.println(cache+"\t变量<22>");
                 }else {
                     vari.add(cache);
-                    System.out.println(cache+"\t变量<21>");
+                    System.out.println(cache+"\t变量<22>");
                 }
-                token.add(21);
+                token.add(22);
             }
             restart = 1;
             ch.clear();
