@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
@@ -14,9 +13,10 @@ public class GrammaticalAnalyzer {
     private Stack<Integer> status = new Stack<>();
     private Stack<String> grammar = new Stack<>();
     private Stack<String> string = new Stack<>();
-    private static final String VARIABLE_PARAMETER = "vari";
-    private static final String CONSTANT_PARAMETER = "cons";
-    private static final String FUNCTION_PARAMETER = "func";
+    private static final String VARIABLE_PARAMETER = "i";
+    private static final String CONSTANT_PARAMETER = "n";
+    private static final String FUNCTION_PARAMETER = "f";
+    private Integer index = 0;
 
     private List<String> translate(List<Integer> token) {
         List<String> expression = new ArrayList<>();
@@ -72,15 +72,15 @@ public class GrammaticalAnalyzer {
         return expression;
     }
 
-    private void showSLR(Integer number) {
-        System.out.format("%-5s", number);
+    private void showSLR() {
+        System.out.format("%-5s", index++);
         System.out.print(" ");
         StringBuilder str = new StringBuilder();
         for (Integer x : status) {
             str.append(x);
             str.append(" ");
         }
-        System.out.format("%-30s", str.toString());
+        System.out.format("%-50s", str.toString());
         System.out.print(" ");
         str.delete(0, str.length());
         for (String x : grammar) {
@@ -97,22 +97,19 @@ public class GrammaticalAnalyzer {
     }
 
     private Boolean move(List<String> expression) {
-        Stack<Integer> status = new Stack<>();
         status.push(0);
-        Stack<String> grammar = new Stack<>();
         grammar.push("#");
-        Stack<String> string = new Stack<>();
         string.push("#");
-        Integer index = 0;
 
         for (int i = expression.size(); i > 0; i--) {
             string.push(expression.get(i - 1));
         }
-        System.out.format("%-5s %-30s %-40s %-40s\n", "步骤", "状态栈", "符号栈", "输入串");
-        showSLR(index);
+        System.out.format("%-5s %-50s %-40s %-40s\n", "步骤", "状态栈", "符号栈", "输入串");
+        showSLR();
         System.out.println("移进");
+
         String ch = "";
-        while ("#".equals(string.peek())) {
+        while (!"s".equals(grammar.peek()) && !string.empty()) {
             if (readNext) {
                 ch = string.pop();
             } else {
@@ -121,14 +118,14 @@ public class GrammaticalAnalyzer {
             switch (status.peek()) {
                 case 0:
                     if (VARIABLE_PARAMETER.equals(ch)) {
-                        shiftIn(index, 3, ch);
+                        shiftIn(3, ch);
                     }
                     continue;
                 case 1:
                     if ("?".equals(ch)) {
-                        shiftIn(index, 4, ch);
+                        shiftIn(4, ch);
                     } else if (VARIABLE_PARAMETER.equals(ch)) {
-                        showSLR(index);
+                        showSLR();
                         grammar.pop();
                         status.pop();
                         status.push(3);
@@ -139,14 +136,14 @@ public class GrammaticalAnalyzer {
                 case 2:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "#".equals(ch)) {
                         Integer[] reducePushStatus = {0, 1, 2, 5};
-                        reduce(index, 1, "S", reducePushStatus);
-                        continue;
+                        reduce(1, "S", reducePushStatus);
                     }
+                    continue;
                 case 3:
                     if ("=".equals(ch)) {
-                        shiftIn(index, 6, ch);
-                        continue;
+                        shiftIn(6, ch);
                     }
+                    continue;
                 case 4:
                 case 6:
                 case 13:
@@ -156,19 +153,19 @@ public class GrammaticalAnalyzer {
                 case 21:
                     switch (ch) {
                         case VARIABLE_PARAMETER:
-                            shiftIn(index, 15, ch);
+                            shiftIn(15, ch);
                             continue;
                         case "-":
-                            shiftIn(index, 14, ch);
+                            shiftIn(14, ch);
                             continue;
                         case FUNCTION_PARAMETER:
-                            shiftIn(index, 12, ch);
+                            shiftIn(12, ch);
                             continue;
                         case "(":
-                            shiftIn(index, 13, ch);
+                            shiftIn(13, ch);
                             continue;
                         case CONSTANT_PARAMETER:
-                            shiftIn(index, 16, ch);
+                            shiftIn(16, ch);
                             continue;
                         default:
                             continue;
@@ -176,137 +173,195 @@ public class GrammaticalAnalyzer {
                 case 5:
                     if ("?".equals(ch) || "#".equals(ch)) {
                         Integer[] reducePushStatus = {0, 1, 2, 5};
-                        reduce(index, 1, "S", reducePushStatus);
-                        continue;
+                        reduce(1, "S", reducePushStatus);
                     }
+                    continue;
                 case 7:
-                    if (VARIABLE_PARAMETER.equals(ch)) {
-                        status.pop();
-                        grammar.pop();
-                        grammar.push("S");
-                        showSLR(index);
+                    if (VARIABLE_PARAMETER.equals(ch) || ";".equals(ch)) {
+                        reduce(3,"s",null);
+                        showSLR();
                         System.out.println("acc");
-                        continue;
                     }
+                    continue;
                 case 8:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || ")".equals(ch) || "#".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 7, 6, 17, 13, 24};
-                        reduce(index, 1, "B", reducePushStatus);
+                        reduce(1, "B", reducePushStatus);
                     } else if ("+".equals(ch)) {
-                        shiftIn(index, 18, ch);
+                        shiftIn(18, ch);
                     } else if ("-".equals(ch)) {
-                        shiftIn(index, 19, ch);
+                        shiftIn(19, ch);
                     }
                     continue;
                 case 9:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || ")".equals(ch) || "#".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 8, 6, 8, 13, 8};
-                        reduce(index, 1, "C", reducePushStatus);
+                        reduce(1, "C", reducePushStatus);
                     } else if ("*".equals(ch)) {
-                        shiftIn(index, 20, ch);
+                        shiftIn(20, ch);
                     } else if ("/".equals(ch)) {
-                        shiftIn(index, 21, ch);
+                        shiftIn(21, ch);
                     }
                     continue;
                 case 10:
-                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch)) {
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 9, 6, 9, 13, 9, 18, 27, 19, 28};
-                        reduce(index, 1, "T", reducePushStatus);
-                        continue;
+                        reduce(1, "T", reducePushStatus);
                     }
+                    continue;
                 case 11:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 10, 6, 10, 13, 10, 18, 10, 19, 10, 20, 29, 21, 30};
-                        reduce(index, 1, "F", reducePushStatus);
+                        reduce(1, "F", reducePushStatus);
                     } else if ("^".equals(ch)) {
-                        shiftIn(index, 22, ch);
+                        shiftIn(22, ch);
                     }
                     continue;
                 case 12:
                     if ("(".equals(ch)) {
-                        shiftIn(index, 23, ch);
+                        shiftIn(23, ch);
                     }
                     continue;
                 case 14:
                     if ("(".equals(ch)) {
-                        shiftIn(index, 25, ch);
+                        shiftIn(25, ch);
                     }
                     continue;
                 case 15:
-                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch)) {
-                        Integer[] reducePushStatus = {4, 11, 6, 11, 13, 11, 18, 11, 19, 11, 20, 11, 21, 11, 22, 31, 23, 33, 25, 34};
-                        reduce(index, 1, "E", reducePushStatus);
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch) || ";".equals(ch)) {
+                        Integer[] reducePushStatus = {4, 11, 6, 11, 13, 11, 18, 11, 19, 11, 20, 11, 21, 11, 22, 31, 23, 32, 25, 34};
+                        reduce(1, "E", reducePushStatus);
                     }
                     continue;
                 case 16:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 11, 6, 11, 13, 11, 18, 11, 19, 11, 20, 11, 21, 11, 22, 31, 23, 33, 25, 34};
-                        reduce(index, 1, "E", reducePushStatus);
+                        reduce(1, "E", reducePushStatus);
                     }
                     continue;
                 case 17:
                     if (";".equals(ch)) {
-                        shiftIn(index, 26, ch);
+                        shiftIn(26, ch);
                     }
                     continue;
                 case 22:
                 case 23:
                 case 25:
+                case 36:
                     switch (ch) {
                         case VARIABLE_PARAMETER:
-                            shiftIn(index, 15, ch);
+                            shiftIn(15, ch);
                             continue;
                         case "-":
-                            shiftIn(index, 14, ch);
+                            shiftIn(14, ch);
                             continue;
                         case "(":
-                            shiftIn(index, 13, ch);
+                            shiftIn(13, ch);
                             continue;
                         case CONSTANT_PARAMETER:
-                            shiftIn(index, 16, ch);
+                            shiftIn(16, ch);
                             continue;
                         default:
                             continue;
                     }
                 case 24:
-                    if (")".equals(ch)){
-                        shiftIn(index,33,ch);
+                    if (")".equals(ch)) {
+                        shiftIn(33, ch);
                     }
                     continue;
                 case 26:
-                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "#".equals(ch) || ";".equals(ch)){
-                        Integer[] reducePushStatus = {0,2};
-                        reduce(index,4,"A",reducePushStatus);
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "#".equals(ch) || ";".equals(ch)) {
+                        Integer[] reducePushStatus = {0, 2};
+                        reduce(4, "A", reducePushStatus);
                     }
                     continue;
                 case 27:
                 case 28:
-                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || ")".equals(ch) || "#".equals(ch)){
-                        Integer[] reducePushStatus = {4,8,6,8,13,8};
-                        reduce(index,3,"C",reducePushStatus);
-                    }else if ("*".equals(ch)){
-                        shiftIn(index,20,ch);
-                    }else if ("/".equals(ch)){
-                        shiftIn(index,21,ch);
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || ")".equals(ch) || "#".equals(ch) || ";".equals(ch)) {
+                        Integer[] reducePushStatus = {4, 8, 6, 8, 13, 8};
+                        reduce(3, "C", reducePushStatus);
+                    } else if ("*".equals(ch)) {
+                        shiftIn(20, ch);
+                    } else if ("/".equals(ch)) {
+                        shiftIn(21, ch);
+                    }
+                    continue;
+                case 29:
+                case 30:
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ";".equals(ch)) {
+                        Integer[] reducePushStatus = {4, 9, 6, 9, 13, 9, 18, 27, 19, 28};
+                        reduce(3, "T", reducePushStatus);
+                    }
+                    continue;
+                case 31:
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch) || ";".equals(ch)) {
+                        Integer[] reducePushStatus = {4, 10, 6, 10, 13, 10, 18, 10, 19, 10, 20, 29, 21, 30};
+                        reduce(3, "F", reducePushStatus);
+                    }
+                    continue;
+                case 32:
+                    if (")".equals(ch)) {
+                        shiftIn(35, ch);
+                    } else if (",".equals(ch)) {
+                        shiftIn(36, ch);
+                    }
+                    continue;
+                case 33:
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch) || ";".equals(ch)) {
+                        Integer[] reducePushStatus = {4, 11, 6, 11, 13, 11, 18, 11, 19, 11, 20, 11, 21, 11, 22, 31, 23, 33, 25, 34};
+                        reduce(3, "E", reducePushStatus);
+                    }
+                    continue;
+                case 34:
+                    if (")".equals(ch)) {
+                        shiftIn(37, ch);
+                    }
+                    continue;
+                case 35:
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch)) {
+                        Integer[] reducePushStatus = {4, 10, 6, 10, 13, 10, 18, 10, 19, 10, 20, 29, 21, 30};
+                        reduce(4, "F", reducePushStatus);
+                    }
+                    continue;
+                case 37:
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch)){
+                        Integer[] reducePushStatus = {4,11,6,11,13,11,18,11,19,11,20,11,21,11,22,31,23,33,25,34};
+                        reduce(4,"E",reducePushStatus);
+                    }
+                    continue;
+                case 38:
+                    if (")".equals(ch)){
+                        shiftIn(39,ch);
+                    }
+                    continue;
+                case 39:
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch)){
+                        Integer[] reducePushStatus = {4,10,6,10,13,10,18,10,19,10,20,29,21,30};
+                        reduce(6,"F",reducePushStatus);
                     }
                     continue;
                 default:
 
             }
         }
-        return true;
-
+        if (!string.empty()){
+            System.out.println("success!");
+            return true;
+        }else {
+            System.out.println("error!");
+            return false;
+        }
     }
 
-    private void shiftIn(Integer index, Integer pushStatus, String pushGrammar) {
-        showSLR(index);
-        System.out.println("移进");
+    private void shiftIn(Integer pushStatus, String pushGrammar) {
         status.push(pushStatus);
         grammar.push(pushGrammar);
+        showSLR();
+        System.out.println("移进");
     }
 
-    private void reduce(Integer index, Integer reduceCount, String pushGrammar, Integer[] pushStatus) {
-        showSLR(index);
+    private void reduce(Integer reduceCount, String pushGrammar, Integer[] pushStatus) {
+        showSLR();
         System.out.println("规约");
         for (int i = 0; i < reduceCount; i++) {
             status.pop();
@@ -317,13 +372,16 @@ public class GrammaticalAnalyzer {
     }
 
     private void reducePushStatus(Integer[] pushStatus) {
-        if (pushStatus.length % 2 != 0) {
-            throw new RuntimeException("规约键值对出错！");
-        } else {
-            for (int i = 0; i < pushStatus.length; i++) {
-                if (status.peek().equals(pushStatus[i++])) {
-                    readNext = false;
-                    status.push(pushStatus[i]);
+        if (null != pushStatus) {
+            if (pushStatus.length % 2 != 0) {
+                throw new RuntimeException("规约键值对出错！");
+            } else {
+                for (int i = 0; i < pushStatus.length; i++) {
+                    if (status.peek().equals(pushStatus[i++])) {
+                        readNext = false;
+                        status.push(pushStatus[i]);
+                        break;
+                    }
                 }
             }
         }
