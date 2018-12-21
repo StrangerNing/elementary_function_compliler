@@ -8,6 +8,6 @@ import java.util.List;
 public class Run {
     public static void main(String[] args){
         List<Integer> token = LexicalAnalyzer.analyzer("D:/test.txt");
-
+        Boolean grammaticalCheck = GrammaticalAnalyzer.analyzer(token);
     }
 }

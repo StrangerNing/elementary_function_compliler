@@ -119,6 +119,8 @@ public class GrammaticalAnalyzer {
                 case 0:
                     if (VARIABLE_PARAMETER.equals(ch)) {
                         shiftIn(3, ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 1:
@@ -131,17 +133,23 @@ public class GrammaticalAnalyzer {
                         status.push(3);
                         grammar.push(ch);
                         System.out.println("移进");
+                    }else {
+                        return false;
                     }
                     continue;
                 case 2:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "#".equals(ch)) {
                         Integer[] reducePushStatus = {0, 1, 2, 5};
                         reduce(1, "S", reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 3:
                     if ("=".equals(ch)) {
                         shiftIn(6, ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 4:
@@ -168,12 +176,14 @@ public class GrammaticalAnalyzer {
                             shiftIn(16, ch);
                             continue;
                         default:
-                            continue;
+                            return false;
                     }
                 case 5:
                     if ("?".equals(ch) || "#".equals(ch)) {
                         Integer[] reducePushStatus = {0, 1, 2, 5};
                         reduce(1, "S", reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 7:
@@ -181,6 +191,8 @@ public class GrammaticalAnalyzer {
                         reduce(3,"s",null);
                         showSLR();
                         System.out.println("acc");
+                    }else {
+                        return false;
                     }
                     continue;
                 case 8:
@@ -191,6 +203,8 @@ public class GrammaticalAnalyzer {
                         shiftIn(18, ch);
                     } else if ("-".equals(ch)) {
                         shiftIn(19, ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 9:
@@ -201,12 +215,16 @@ public class GrammaticalAnalyzer {
                         shiftIn(20, ch);
                     } else if ("/".equals(ch)) {
                         shiftIn(21, ch);
+                    } else {
+                        return false;
                     }
                     continue;
                 case 10:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 9, 6, 9, 13, 9, 18, 27, 19, 28};
                         reduce(1, "T", reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 11:
@@ -215,33 +233,45 @@ public class GrammaticalAnalyzer {
                         reduce(1, "F", reducePushStatus);
                     } else if ("^".equals(ch)) {
                         shiftIn(22, ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 12:
                     if ("(".equals(ch)) {
                         shiftIn(23, ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 14:
                     if ("(".equals(ch)) {
                         shiftIn(25, ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 15:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 11, 6, 11, 13, 11, 18, 11, 19, 11, 20, 11, 21, 11, 22, 31, 23, 32, 25, 34};
                         reduce(1, "E", reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 16:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 11, 6, 11, 13, 11, 18, 11, 19, 11, 20, 11, 21, 11, 22, 31, 23, 33, 25, 34};
                         reduce(1, "E", reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 17:
                     if (";".equals(ch)) {
                         shiftIn(26, ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 22:
@@ -262,17 +292,21 @@ public class GrammaticalAnalyzer {
                             shiftIn(16, ch);
                             continue;
                         default:
-                            continue;
+                            return false;
                     }
                 case 24:
                     if (")".equals(ch)) {
                         shiftIn(33, ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 26:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "#".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {0, 2};
                         reduce(4, "A", reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 27:
@@ -284,6 +318,8 @@ public class GrammaticalAnalyzer {
                         shiftIn(20, ch);
                     } else if ("/".equals(ch)) {
                         shiftIn(21, ch);
+                    } else {
+                        return false;
                     }
                     continue;
                 case 29:
@@ -291,12 +327,16 @@ public class GrammaticalAnalyzer {
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 9, 6, 9, 13, 9, 18, 27, 19, 28};
                         reduce(3, "T", reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 31:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 10, 6, 10, 13, 10, 18, 10, 19, 10, 20, 29, 21, 30};
                         reduce(3, "F", reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 32:
@@ -304,53 +344,61 @@ public class GrammaticalAnalyzer {
                         shiftIn(35, ch);
                     } else if (",".equals(ch)) {
                         shiftIn(36, ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 33:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 11, 6, 11, 13, 11, 18, 11, 19, 11, 20, 11, 21, 11, 22, 31, 23, 33, 25, 34};
                         reduce(3, "E", reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 34:
                     if (")".equals(ch)) {
                         shiftIn(37, ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 35:
-                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch)) {
+                    if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch) || ";".equals(ch)) {
                         Integer[] reducePushStatus = {4, 10, 6, 10, 13, 10, 18, 10, 19, 10, 20, 29, 21, 30};
                         reduce(4, "F", reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 37:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch)){
                         Integer[] reducePushStatus = {4,11,6,11,13,11,18,11,19,11,20,11,21,11,22,31,23,33,25,34};
                         reduce(4,"E",reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 38:
                     if (")".equals(ch)){
                         shiftIn(39,ch);
+                    }else {
+                        return false;
                     }
                     continue;
                 case 39:
                     if (VARIABLE_PARAMETER.equals(ch) || "?".equals(ch) || "+".equals(ch) || "-".equals(ch) || "*".equals(ch) || "/".equals(ch) || ")".equals(ch) || "#".equals(ch) || ",".equals(ch) || "^".equals(ch)){
                         Integer[] reducePushStatus = {4,10,6,10,13,10,18,10,19,10,20,29,21,30};
                         reduce(6,"F",reducePushStatus);
+                    }else {
+                        return false;
                     }
                     continue;
                 default:
 
             }
         }
-        if (!string.empty()){
-            System.out.println("success!");
-            return true;
-        }else {
-            System.out.println("error!");
-            return false;
-        }
+        return true;
     }
 
     private void shiftIn(Integer pushStatus, String pushGrammar) {
@@ -387,15 +435,19 @@ public class GrammaticalAnalyzer {
         }
     }
 
-    public static void main(String[] args) {
+    public static Boolean analyzer(List<Integer> token) {
         GrammaticalAnalyzer grammaticalAnalyzer = new GrammaticalAnalyzer();
-        List<Integer> token = LexicalAnalyzer.analyzer("D:/test.txt");
         List<String> expression = grammaticalAnalyzer.translate(token);
         for (String x : expression) {
             System.out.print(x);
         }
         System.out.println();
-        grammaticalAnalyzer.move(expression);
-
+        if (grammaticalAnalyzer.move(expression)){
+            System.out.println("success!");
+            return true;
+        }else {
+            System.out.println("error!");
+            return false;
+        }
     }
 }

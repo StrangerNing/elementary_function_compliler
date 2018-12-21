@@ -13,7 +13,7 @@ import java.util.List;
 public class LexicalAnalyzer {
 
     private String[] func = {"sin","cos","tg","ctg","^","log","lg","ln"};
-    private String[] compart = {" ","\t","\r","(",")",";"};
+    private String[] compart = {" ","\t","\r","(",")",";",","};
     private String[] operation = {"+","*","/","="};
     private List<String> num = new ArrayList<>();
     private List<String> vari = new ArrayList<>();
@@ -79,7 +79,7 @@ public class LexicalAnalyzer {
 
         if (state ==1) {
             if (c.equals('-')) {
-                state = 2;
+                state = 1;
                 System.out.println(c + "\t运算符<9>");
                 token.add(9);
                 return state;
